@@ -5,6 +5,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import AppNavbar from './components/layout/Navbar';
 import Alerts from './components/layout/Alerts';
 import Home from './components/pages/Home';
+import Accueil from './components/pages/Accueil';
 import Register from './components/auth/Register';
 import Login from './components/auth/Login';
 import PostDetail from './components/posts/PostDetail';
@@ -53,6 +54,7 @@ const App = () => {
                   <Alerts />
                   <Routes>
                     <Route path="/" element={<Home />} />
+                    <Route path="/acceuil" element={<Accueil />} />
                     <Route path="/register" element={<Register />} />
                     <Route path="/login" element={<Login />} />
                     <Route path="/posts/:id" element={<PostDetail />} />

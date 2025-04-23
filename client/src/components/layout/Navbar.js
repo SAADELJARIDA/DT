@@ -19,8 +19,20 @@ const Navbar = () => {
     <>
       <div className="hidden md:block flex-1">
         <div className="ml-10 flex items-baseline space-x-4">
+          <Link to="/acceuil" className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
+            Accueil
+          </Link>
+          <Link to="/actualites" className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
+            Actualités
+          </Link>
+          <Link to="/evenements" className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
+            Évènements
+          </Link>
           <Link to="/" className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
-            Home
+            Annonces
+          </Link>
+          <Link to="/recherche" className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
+            Recherche
           </Link>
         </div>
       </div>
@@ -60,8 +72,20 @@ const Navbar = () => {
     <>
       <div className="hidden md:block flex-1">
         <div className="ml-10 flex items-baseline space-x-4">
+          <Link to="/acceuil" className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
+            Accueil
+          </Link>
+          <Link to="/actualites" className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
+            Actualités
+          </Link>
+          <Link to="/evenements" className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
+            Évènements
+          </Link>
           <Link to="/" className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
-            Home
+            Annonces
+          </Link>
+          <Link to="/recherche" className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
+            Recherche
           </Link>
         </div>
       </div>
@@ -84,8 +108,20 @@ const Navbar = () => {
   const mobileMenu = (
     <div className={`${isOpen ? 'block' : 'hidden'} md:hidden`}>
       <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+        <Link to="/acceuil" className="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">
+          Accueil
+        </Link>
+        <Link to="/actualites" className="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">
+          Actualités
+        </Link>
+        <Link to="/evenements" className="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">
+          Évènements
+        </Link>
         <Link to="/" className="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">
-          Home
+          Annonces
+        </Link>
+        <Link to="/recherche" className="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">
+          Recherche
         </Link>
         
         {isAuthenticated ? (
