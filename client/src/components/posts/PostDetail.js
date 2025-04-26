@@ -29,7 +29,7 @@ const PostDetail = () => {
     return <Spinner />;
   }
 
-  const { title, content, date, author, likes } = current;
+  const { title, content, imageUrl, date, author, likes } = current;
 
   // Format date
   const formatDate = (dateString) => {
@@ -70,6 +70,20 @@ const PostDetail = () => {
           >
             <i className="fas fa-trash"></i>
           </button>
+        )}
+        
+        {imageUrl && (
+          <div className="w-full h-64 md:h-96 bg-gray-200">
+            <img 
+              src={imageUrl} 
+              alt={title} 
+              className="w-full h-full object-cover"
+              onError={(e) => {
+                e.target.onerror = null;
+                e.target.style.display = 'none';
+              }}
+            />
+          </div>
         )}
         
         <div className="p-6">

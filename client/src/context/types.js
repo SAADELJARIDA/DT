@@ -30,4 +30,13 @@ export const CLEAR_ERRORS = 'CLEAR_ERRORS';
 
 // Alert Types
 export const SET_ALERT = 'SET_ALERT';
-export const REMOVE_ALERT = 'REMOVE_ALERT'; 
+export const REMOVE_ALERT = 'REMOVE_ALERT';
+
+// Actualite types
+export const GET_ACTUALITES = 'GET_ACTUALITES';
+export const GET_ACTUALITE = 'GET_ACTUALITE';
+export const GET_LATEST_ACTUALITES = 'GET_LATEST_ACTUALITES';
+export const ADD_ACTUALITE = 'ADD_ACTUALITE';
+export const DELETE_ACTUALITE = 'DELETE_ACTUALITE';
+export const UPDATE_ACTUALITE = 'UPDATE_ACTUALITE';
+export const ACTUALITE_ERROR = 'ACTUALITE_ERROR'; 

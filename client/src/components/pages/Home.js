@@ -17,10 +17,14 @@ const Home = () => {
   // State for new post form
   const [newPost, setNewPost] = useState({
     title: '',
-    content: ''
+    content: '',
+    imageUrl: ''
   });
 
-  const { title, content } = newPost;
+  // State to control form visibility
+  const [showPostForm, setShowPostForm] = useState(false);
+
+  const { title, content, imageUrl } = newPost;
 
   useEffect(() => {
     if (localStorage.token) {
@@ -43,50 +47,112 @@ const Home = () => {
     } else {
       addPost(newPost);
       setAlert('Post Created Successfully', 'success');
-      setNewPost({ title: '', content: '' });
+      setNewPost({ title: '', content: '', imageUrl: '' });
+      setShowPostForm(false); // Hide the form after submission
     }
+  };
+
+  const togglePostForm = () => {
+    setShowPostForm(!showPostForm);
   };
 
   return (
     <div className="max-w-4xl mx-auto">
       {isAuthenticated && (
-        <div className="bg-white rounded-lg shadow-md overflow-hidden mb-8">
-          <div className="p-6">
-            <h2 className="text-xl font-semibold text-gray-900 mb-4">Create a New Post</h2>
-            <form onSubmit={onSubmit}>
-              <div className="mb-4">
-                <input
-                  type="text"
-                  placeholder="Post title"
-                  name="title"
-                  value={title}
-                  onChange={onChange}
-                  className="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
-                  required
-                />
-              </div>
-              <div className="mb-4">
-                <textarea
-                  placeholder="Write your post content here..."
-                  name="content"
-                  value={content}
-                  onChange={onChange}
-                  rows="3"
-                  className="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
-                  required
-                ></textarea>
-              </div>
-              <div className="flex justify-end">
-                <button
-                  type="submit"
-                  className="px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
+        <>
+          {!showPostForm ? (
+            <div className="flex justify-end mb-6">
+              <button
+                onClick={togglePostForm}
+                className="px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 flex items-center"
+              >
+                <span className="material-icons mr-2">add</span>
+                Create New Post
+              </button>
+            </div>
+          ) : (
+            <div className="bg-white rounded-lg shadow-md overflow-hidden mb-8">
+              <div className="flex justify-between items-center bg-gray-50 px-6 py-3 border-b">
+                <h2 className="text-xl font-semibold text-gray-900">Create a New Post</h2>
+                <button 
+                  onClick={togglePostForm}
+                  className="text-gray-500 hover:text-gray-700"
                 >
-                  Post
+                  <span className="material-icons">close</span>
                 </button>
               </div>
-            </form>
-          </div>
-        </div>
+              <div className="p-6">
+                <form onSubmit={onSubmit}>
+                  <div className="mb-4">
+                    <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1">
+                      Title
+                    </label>
+                    <input
+                      type="text"
+                      id="title"
+                      placeholder="Post title"
+                      name="title"
+                      value={title}
+                      onChange={onChange}
+                      className="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      required
+                    />
+                  </div>
+                  <div className="mb-4">
+                    <label htmlFor="imageUrl" className="block text-sm font-medium text-gray-700 mb-1">
+                      Image URL (optional)
+                    </label>
+                    <input
+                      type="text"
+                      id="imageUrl"
+                      placeholder="Enter an image URL"
+                      name="imageUrl"
+                      value={imageUrl}
+                      onChange={onChange}
+                      className="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                    />
+                    {imageUrl && (
+                      <div className="mt-2">
+                        <img 
+                          src={imageUrl} 
+                          alt="Post preview" 
+                          className="max-h-40 rounded" 
+                          onError={(e) => {
+                            e.target.onerror = null;
+                            e.target.src = 'https://via.placeholder.com/300x200?text=Invalid+Image+URL';
+                          }}
+                        />
+                      </div>
+                    )}
+                  </div>
+                  <div className="mb-4">
+                    <label htmlFor="content" className="block text-sm font-medium text-gray-700 mb-1">
+                      Content
+                    </label>
+                    <textarea
+                      id="content"
+                      placeholder="Write your post content here..."
+                      name="content"
+                      value={content}
+                      onChange={onChange}
+                      rows="5"
+                      className="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      required
+                    ></textarea>
+                  </div>
+                  <div className="flex justify-end">
+                    <button
+                      type="submit"
+                      className="px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
+                    >
+                      Publish Post
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          )}
+        </>
       )}
 
       <div className="mb-6">

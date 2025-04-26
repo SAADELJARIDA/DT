@@ -14,7 +14,7 @@ const Post = ({ post }) => {
   const { comments } = commentContext;
   const { deletePost, likePost, unlikePost } = postContext;
 
-  const { _id, title, content, date, author, likes } = post;
+  const { _id, title, content, imageUrl, date, author, likes } = post;
 
   // Format date
   const formatDate = (dateString) => {
@@ -47,6 +47,19 @@ const Post = ({ post }) => {
 
   return (
     <div className="bg-white rounded-lg shadow-md overflow-hidden">
+      {imageUrl && (
+        <div className="w-full h-48 bg-gray-200">
+          <img 
+            src={imageUrl} 
+            alt={title} 
+            className="w-full h-full object-cover"
+            onError={(e) => {
+              e.target.onerror = null;
+              e.target.style.display = 'none';
+            }}
+          />
+        </div>
+      )}
       <div className="relative p-6">
         {isAuthenticated && user && author && user._id === author._id && (
           <button 

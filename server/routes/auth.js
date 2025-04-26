@@ -3,6 +3,7 @@ const router = express.Router();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const auth = require('../middleware/auth'); // Import auth middleware
+const adminEmails = require('../config/adminEmails');
 
 const User = require('../models/User');
 
@@ -36,11 +37,31 @@ router.get('/test', async (req, res) => {
   }
 });
 
+// @route   GET api/auth/users
+// @desc    Get all users (admin only)
+// @access  Private/Admin
+router.get('/users', auth, async (req, res) => {
+  try {
+    // Check if the current user is admin
+    const adminUser = await User.findById(req.user.id);
+    if (!adminUser || adminUser.role !== 'admin') {
+      return res.status(403).json({ msg: 'Access denied: admin role required' });
+    }
+
+    // Get all users without their passwords
+    const users = await User.find().select('-password').sort({ date: -1 });
+    res.json(users);
+  } catch (err) {
+    console.error('Error getting users:', err.message);
+    res.status(500).send('Server error');
+  }
+});
+
 // @route   POST api/auth/register
 // @desc    Register a user
 // @access  Public
 router.post('/register', async (req, res) => {
-  const { name, email, password } = req.body;
+  const { name, email, password, role } = req.body;
 
   try {
     console.log('Register attempt with:', { name, email });
@@ -52,11 +73,29 @@ router.post('/register', async (req, res) => {
       return res.status(400).json({ msg: 'User already exists' });
     }
 
-    // Create new user
+    // Determine user role:
+    // 1. Is the email in the predefined admin list?
+    // 2. Is this the first user to register?
+    // 3. Otherwise, default to regular user
+    let userRole = 'user';
+    
+    if (adminEmails.includes(email)) {
+      userRole = 'admin';
+    } else {
+      const isFirstUser = await User.countDocuments() === 0;
+      if (isFirstUser) userRole = 'admin';
+    }
+    
+    // Allow explicit role setting only if it's admin and already qualified for admin
+    if (role === 'admin' && userRole === 'admin') {
+      userRole = 'admin';
+    }
+
     user = new User({
       name,
       email,
-      password
+      password,
+      role: userRole
     });
 
     // Hash password
@@ -128,6 +167,99 @@ router.post('/login', async (req, res) => {
     );
   } catch (err) {
     console.error(err.message);
+    res.status(500).send('Server error');
+  }
+});
+
+// @route   POST api/auth/make-admin
+// @desc    Make a user an admin (only existing admins can do this)
+// @access  Private/Admin
+router.post('/make-admin', auth, async (req, res) => {
+  try {
+    // Check if the current user is admin
+    const adminUser = await User.findById(req.user.id);
+    if (!adminUser || adminUser.role !== 'admin') {
+      return res.status(403).json({ msg: 'Access denied: admin role required' });
+    }
+    
+    const { userId } = req.body;
+    
+    // Find the user to update
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ msg: 'User not found' });
+    }
+    
+    // Update the role
+    user.role = 'admin';
+    await user.save();
+    
+    res.json({ msg: 'User successfully made admin', user: { id: user.id, name: user.name, email: user.email, role: user.role } });
+  } catch (err) {
+    console.error('Make admin error:', err.message);
+    res.status(500).send('Server error');
+  }
+});
+
+// @route   POST api/auth/remove-admin
+// @desc    Remove admin rights from a user (only existing admins can do this)
+// @access  Private/Admin
+router.post('/remove-admin', auth, async (req, res) => {
+  try {
+    // Check if the current user is admin
+    const adminUser = await User.findById(req.user.id);
+    if (!adminUser || adminUser.role !== 'admin') {
+      return res.status(403).json({ msg: 'Access denied: admin role required' });
+    }
+    
+    const { userId } = req.body;
+    
+    // Find the user to update
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ msg: 'User not found' });
+    }
+    
+    // Cannot demote yourself
+    if (userId === req.user.id) {
+      return res.status(400).json({ msg: 'Cannot remove your own admin privileges' });
+    }
+    
+    // Update the role
+    user.role = 'user';
+    await user.save();
+    
+    res.json({ msg: 'Admin privileges removed', user: { id: user.id, name: user.name, email: user.email, role: user.role } });
+  } catch (err) {
+    console.error('Remove admin error:', err.message);
+    res.status(500).send('Server error');
+  }
+});
+
+// @route   PUT api/auth/profile
+// @desc    Update user profile
+// @access  Private
+router.put('/profile', auth, async (req, res) => {
+  try {
+    const { name, profileImage } = req.body;
+    
+    // Find user by ID
+    const user = await User.findById(req.user.id);
+    if (!user) {
+      return res.status(404).json({ msg: 'User not found' });
+    }
+    
+    // Update user fields
+    if (name) user.name = name;
+    if (profileImage) user.profileImage = profileImage;
+    
+    await user.save();
+    
+    // Return the updated user without password
+    const updatedUser = await User.findById(req.user.id).select('-password');
+    res.json(updatedUser);
+  } catch (err) {
+    console.error('Profile update error:', err.message);
     res.status(500).send('Server error');
   }
 });
