@@ -1,11 +1,11 @@
 const mongoose = require('mongoose');
 
-const ActualiteSchema = new mongoose.Schema({
+const EventSchema = new mongoose.Schema({
   title: {
     type: String,
     required: true
   },
-  content: {
+  description: {
     type: String,
     required: true
   },
@@ -15,18 +15,26 @@ const ActualiteSchema = new mongoose.Schema({
     enum: ['académique', 'culturel', 'sportif'],
     default: 'académique'
   },
-  date: {
+  eventDate: {
     type: Date,
-    default: Date.now
+    required: true
+  },
+  location: {
+    type: String,
+    required: true
   },
   imageUrl: {
     type: String,
-    default: '/images/news-default.jpg'
+    default: '/images/event-default.jpg'
   },
   author: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'user'
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now
   }
 });
 
-module.exports = mongoose.model('actualite', ActualiteSchema); 
+module.exports = mongoose.model('event', EventSchema); 

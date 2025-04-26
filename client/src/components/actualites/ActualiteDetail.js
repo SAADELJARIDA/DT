@@ -23,9 +23,23 @@ const ActualiteDetail = () => {
     return <Spinner />;
   }
   
-  const { title, content, date, imageUrl, author } = actualite;
+  const { title, content, date, imageUrl, author, category } = actualite;
   const formattedDate = formatDate(date);
   const isAdmin = user && user.role === 'admin';
+  
+  // Get category color
+  const getCategoryColor = (cat) => {
+    switch(cat) {
+      case 'académique':
+        return 'bg-blue-100 text-blue-800';
+      case 'culturel':
+        return 'bg-purple-100 text-purple-800';
+      case 'sportif':
+        return 'bg-green-100 text-green-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
+    }
+  };
   
   return (
     <div className="max-w-4xl mx-auto">
@@ -50,7 +64,12 @@ const ActualiteDetail = () => {
         
         <div className="p-6 sm:p-8">
           <div className="flex justify-between items-center mb-4">
-            <span className="text-sm text-primary-600 font-medium">{formattedDate}</span>
+            <div className="flex items-center space-x-3">
+              <span className="text-sm text-primary-600 font-medium">{formattedDate}</span>
+              <span className={`text-xs px-2 py-1 rounded-full ${getCategoryColor(category)}`}>
+                {category}
+              </span>
+            </div>
             
             {isAdmin && (
               <Link

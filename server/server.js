@@ -45,6 +45,7 @@ app.use('/api/auth', require('./routes/auth'));
 app.use('/api/posts', require('./routes/posts'));
 app.use('/api/comments', require('./routes/comments'));
 app.use('/api/actualites', require('./routes/actualites'));
+app.use('/api/events', require('./routes/events'));
 
 // Basic route for testing
 app.get('/', (req, res) => {

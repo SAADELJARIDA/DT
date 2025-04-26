@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { formatDate } from '../../utils/formatDate';
 
 const ActualiteItem = ({ actualite, admin, onDelete, onEdit }) => {
-  const { _id, title, content, date, imageUrl } = actualite;
+  const { _id, title, content, date, imageUrl, category } = actualite;
   
   // Truncate content for card display
   const truncatedContent = content.length > 100 
@@ -13,6 +13,20 @@ const ActualiteItem = ({ actualite, admin, onDelete, onEdit }) => {
   
   // Format date from ISO to a readable format (e.g., "12 Mars 2024")
   const formattedDate = formatDate(date);
+  
+  // Get category color
+  const getCategoryColor = (cat) => {
+    switch(cat) {
+      case 'académique':
+        return 'bg-blue-100 text-blue-800';
+      case 'culturel':
+        return 'bg-purple-100 text-purple-800';
+      case 'sportif':
+        return 'bg-green-100 text-green-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
+    }
+  };
   
   return (
     <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
@@ -24,7 +38,12 @@ const ActualiteItem = ({ actualite, admin, onDelete, onEdit }) => {
         />
       </div>
       <div className="p-6">
-        <span className="text-sm text-primary-600 font-medium">{formattedDate}</span>
+        <div className="flex justify-between items-center mb-2">
+          <span className="text-sm text-primary-600 font-medium">{formattedDate}</span>
+          <span className={`text-xs px-2 py-1 rounded-full ${getCategoryColor(category)}`}>
+            {category}
+          </span>
+        </div>
         <h3 className="text-xl font-semibold text-gray-900 mb-2">{title}</h3>
         <p className="text-gray-600 mb-4">
           {truncatedContent}

@@ -39,6 +39,18 @@ const ActualiteState = props => {
     }
   };
 
+  // Get actualites by category
+  const getActualitesByCategory = async (category) => {
+    setLoading();
+    
+    try {
+      const res = await axios.get(`/api/actualites/category/${category}`);
+      dispatch({ type: GET_ACTUALITES, payload: res.data });
+    } catch (err) {
+      dispatch({ type: ACTUALITE_ERROR, payload: err.response?.data?.msg || 'Error fetching actualites by category' });
+    }
+  };
+
   // Get latest actualites (limit 3)
   const getLatestActualites = async () => {
     setLoading();
@@ -131,6 +143,7 @@ const ActualiteState = props => {
         error: state.error,
         getActualites,
         getLatestActualites,
+        getActualitesByCategory,
         getActualite,
         addActualite,
         updateActualite,
