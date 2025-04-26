@@ -27,8 +27,9 @@ const AuthState = props => {
 
   // Load User
   const loadUser = async () => {
-    if (localStorage.token) {
-      setAuthToken(localStorage.token);
+    const token = localStorage.getItem('token');
+    if (token) {
+      setAuthToken(token);
     }
 
     try {
@@ -59,12 +60,18 @@ const AuthState = props => {
       const res = await axios.post('/api/auth/register', formData, config);
       console.log('Registration successful, token received');
       
+      // Save token to localStorage first
+      localStorage.setItem('token', res.data.token);
+      
+      // Set auth token in headers
+      setAuthToken(res.data.token);
+      
       dispatch({
         type: REGISTER_SUCCESS,
         payload: res.data
       });
 
-      // Must be called after the dispatch completes
+      // Now load the user
       await loadUser();
     } catch (err) {
       console.error('Registration failed:', err.response?.data?.msg || err.message);
@@ -88,12 +95,18 @@ const AuthState = props => {
       const res = await axios.post('/api/auth/login', formData, config);
       console.log('Login successful, token received');
       
+      // Save token to localStorage first
+      localStorage.setItem('token', res.data.token);
+      
+      // Set auth token in headers
+      setAuthToken(res.data.token);
+      
       dispatch({
         type: LOGIN_SUCCESS,
         payload: res.data
       });
 
-      // Must be called after the dispatch completes
+      // Now load the user
       await loadUser();
     } catch (err) {
       console.error('Login failed:', err.response?.data?.msg || err.message);
@@ -108,6 +121,8 @@ const AuthState = props => {
   const logout = () => {
     console.log('Logging out user');
     dispatch({ type: LOGOUT });
+    // Redirect to accueil page after logout
+    window.location.href = '/accueil';
   };
 
   // Clear Errors

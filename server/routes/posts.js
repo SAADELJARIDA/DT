@@ -46,11 +46,12 @@ router.get('/:id', async (req, res) => {
 // @access  Private
 router.post('/', auth, async (req, res) => {
   try {
-    const { title, content } = req.body;
+    const { title, content, imageUrl } = req.body;
     
     const newPost = new Post({
       title,
       content,
+      imageUrl,
       author: req.user.id
     });
     
@@ -78,9 +79,12 @@ router.put('/:id', auth, async (req, res) => {
       return res.status(401).json({ msg: 'User not authorized' });
     }
     
-    const { title, content } = req.body;
+    const { title, content, imageUrl } = req.body;
     post.title = title;
     post.content = content;
+    if (imageUrl !== undefined) {
+      post.imageUrl = imageUrl;
+    }
     
     await post.save();
     res.json(post);
