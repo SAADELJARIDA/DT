@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const auth = require('../middleware/auth');
 
-const Actualite = require('../models/Actualite');
+const Event = require('../models/Event');
 const User = require('../models/User');
 
 // Middleware to check if user is admin
@@ -19,136 +19,143 @@ const isAdmin = async (req, res, next) => {
   }
 };
 
-// @route   GET api/actualites
-// @desc    Get all actualites
+// @route   GET api/events
+// @desc    Get all events
 // @access  Public
 router.get('/', async (req, res) => {
   try {
-    // Get latest news first
-    const actualites = await Actualite.find()
+    // Get upcoming events first, then past events
+    const currentDate = new Date();
+    const events = await Event.find()
       .populate('author', 'name')
-      .sort({ date: -1 });
-    res.json(actualites);
+      .sort({ eventDate: 1 });
+    
+    res.json(events);
   } catch (err) {
     console.error(err.message);
     res.status(500).send('Server error');
   }
 });
 
-// @route   GET api/actualites/latest
-// @desc    Get latest actualites (limit to 3)
+// @route   GET api/events/upcoming
+// @desc    Get upcoming events
 // @access  Public
-router.get('/latest', async (req, res) => {
+router.get('/upcoming', async (req, res) => {
   try {
-    // Get latest 3 news items
-    const actualites = await Actualite.find()
+    const currentDate = new Date();
+    const events = await Event.find({ eventDate: { $gte: currentDate } })
       .populate('author', 'name')
-      .sort({ date: -1 })
+      .sort({ eventDate: 1 })
       .limit(3);
-    res.json(actualites);
+    
+    res.json(events);
   } catch (err) {
     console.error(err.message);
     res.status(500).send('Server error');
   }
 });
 
-// @route   GET api/actualites/:id
-// @desc    Get actualite by ID
+// @route   GET api/events/:id
+// @desc    Get event by ID
 // @access  Public
 router.get('/:id', async (req, res) => {
   try {
-    const actualite = await Actualite.findById(req.params.id).populate('author', 'name');
+    const event = await Event.findById(req.params.id).populate('author', 'name');
     
-    if (!actualite) {
-      return res.status(404).json({ msg: 'Actualité non trouvée' });
+    if (!event) {
+      return res.status(404).json({ msg: 'Événement non trouvé' });
     }
     
-    res.json(actualite);
+    res.json(event);
   } catch (err) {
     console.error(err.message);
     if (err.kind === 'ObjectId') {
-      return res.status(404).json({ msg: 'Actualité non trouvée' });
+      return res.status(404).json({ msg: 'Événement non trouvé' });
     }
     res.status(500).send('Server error');
   }
 });
 
-// @route   POST api/actualites
-// @desc    Create an actualite
+// @route   POST api/events
+// @desc    Create an event
 // @access  Private (admin only)
 router.post('/', [auth, isAdmin], async (req, res) => {
   try {
-    const { title, content, imageUrl, category } = req.body;
+    const { title, description, eventDate, location, imageUrl, category } = req.body;
     
-    const newActualite = new Actualite({
+    const newEvent = new Event({
       title,
-      content,
+      description,
+      eventDate,
+      location,
       imageUrl,
       category,
       author: req.user.id
     });
     
-    const actualite = await newActualite.save();
-    res.json(actualite);
+    const event = await newEvent.save();
+    res.json(event);
   } catch (err) {
     console.error(err.message);
     res.status(500).send('Server error');
   }
 });
 
-// @route   PUT api/actualites/:id
-// @desc    Update an actualite
+// @route   PUT api/events/:id
+// @desc    Update an event
 // @access  Private (admin only)
 router.put('/:id', [auth, isAdmin], async (req, res) => {
   try {
-    const { title, content, imageUrl, category } = req.body;
+    const { title, description, eventDate, location, imageUrl, category } = req.body;
     
-    const actualite = await Actualite.findById(req.params.id);
+    const event = await Event.findById(req.params.id);
     
-    if (!actualite) {
-      return res.status(404).json({ msg: 'Actualité non trouvée' });
+    if (!event) {
+      return res.status(404).json({ msg: 'Événement non trouvé' });
     }
     
-    actualite.title = title;
-    actualite.content = content;
-    if (imageUrl) actualite.imageUrl = imageUrl;
-    if (category) actualite.category = category;
+    event.title = title;
+    event.description = description;
+    event.eventDate = eventDate;
+    event.location = location;
+    if (imageUrl) event.imageUrl = imageUrl;
+    if (category) event.category = category;
     
-    await actualite.save();
-    res.json(actualite);
+    await event.save();
+    res.json(event);
   } catch (err) {
     console.error(err.message);
     if (err.kind === 'ObjectId') {
-      return res.status(404).json({ msg: 'Actualité non trouvée' });
+      return res.status(404).json({ msg: 'Événement non trouvé' });
     }
     res.status(500).send('Server error');
   }
 });
 
-// @route   DELETE api/actualites/:id
-// @desc    Delete an actualite
+// @route   DELETE api/events/:id
+// @desc    Delete an event
 // @access  Private (admin only)
 router.delete('/:id', [auth, isAdmin], async (req, res) => {
   try {
-    const actualite = await Actualite.findById(req.params.id);
+    const event = await Event.findById(req.params.id);
     
-    if (!actualite) {
-      return res.status(404).json({ msg: 'Actualité non trouvée' });
+    if (!event) {
+      return res.status(404).json({ msg: 'Événement non trouvé' });
     }
     
-    await actualite.remove();
-    res.json({ msg: 'Actualité supprimée' });
+    await event.remove();
+    res.json({ msg: 'Événement supprimé' });
   } catch (err) {
     console.error(err.message);
     if (err.kind === 'ObjectId') {
-      return res.status(404).json({ msg: 'Actualité non trouvée' });
+      return res.status(404).json({ msg: 'Événement non trouvé' });
     }
     res.status(500).send('Server error');
   }
 });
 
-// @route   GET api/actualites/category/:category
-// @desc    Get actualites by category
+// @route   GET api/events/category/:category
+// @desc    Get events by category
 // @access  Public
 router.get('/category/:category', async (req, res) => {
   try {
@@ -159,12 +166,12 @@ router.get('/category/:category', async (req, res) => {
       return res.status(400).json({ msg: 'Catégorie invalide' });
     }
     
-    // Get actualites by category
-    const actualites = await Actualite.find({ category })
+    // Get events by category
+    const events = await Event.find({ category })
       .populate('author', 'name')
-      .sort({ date: -1 });
+      .sort({ eventDate: 1 });
       
-    res.json(actualites);
+    res.json(events);
   } catch (err) {
     console.error(err.message);
     res.status(500).send('Server error');

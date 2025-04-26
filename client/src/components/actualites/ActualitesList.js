@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import ActualiteContext from '../../context/actualite/actualiteContext';
 import AuthContext from '../../context/auth/authContext';
@@ -11,9 +11,11 @@ const ActualitesList = ({ admin }) => {
   const authContext = useContext(AuthContext);
   const alertContext = useContext(AlertContext);
   
-  const { actualites, loading, getActualites, deleteActualite, setCurrent } = actualiteContext;
+  const { actualites, loading, getActualites, getActualitesByCategory, deleteActualite, setCurrent } = actualiteContext;
   const { user } = authContext;
   const { setAlert } = alertContext;
+  
+  const [activeCategory, setActiveCategory] = useState('all');
   
   const navigate = useNavigate();
   
@@ -34,13 +36,29 @@ const ActualitesList = ({ admin }) => {
     navigate(`/admin/actualites/edit/${actualite._id}`);
   };
   
+  const handleCategoryChange = (category) => {
+    setActiveCategory(category);
+    if (category === 'all') {
+      getActualites();
+    } else {
+      getActualitesByCategory(category);
+    }
+  };
+  
   if (loading) {
     return <Spinner />;
   }
   
+  const categories = [
+    { id: 'all', name: 'Toutes les actualités' },
+    { id: 'académique', name: 'Académique' },
+    { id: 'culturel', name: 'Culturel' },
+    { id: 'sportif', name: 'Sportif' }
+  ];
+  
   return (
     <div>
-      <div className="flex justify-between items-center mb-8">
+      <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold text-gray-900">
           {admin ? 'Gestion des Actualités' : 'Toutes les Actualités'}
         </h1>
@@ -56,6 +74,25 @@ const ActualitesList = ({ admin }) => {
             Nouvelle Actualité
           </Link>
         )}
+      </div>
+      
+      <div className="mb-8 border-b border-gray-200">
+        <nav className="flex -mb-px overflow-x-auto" aria-label="Catégories">
+          {categories.map((category) => (
+            <button
+              key={category.id}
+              onClick={() => handleCategoryChange(category.id)}
+              className={`mr-8 py-4 px-1 inline-flex items-center text-sm font-medium border-b-2 ${
+                activeCategory === category.id
+                  ? 'border-primary-500 text-primary-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              }`}
+              aria-current={activeCategory === category.id ? 'page' : undefined}
+            >
+              {category.name}
+            </button>
+          ))}
+        </nav>
       </div>
       
       {actualites.length === 0 ? (

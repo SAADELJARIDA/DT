@@ -1,21 +1,32 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
-import ActualiteContext from '../../context/actualite/actualiteContext';
+import EventContext from '../../context/event/eventContext';
 import AlertContext from '../../context/alert/alertContext';
 
-const ActualiteForm = () => {
-  const actualiteContext = useContext(ActualiteContext);
+const EventForm = () => {
+  const eventContext = useContext(EventContext);
   const alertContext = useContext(AlertContext);
   
-  const { addActualite, updateActualite, current, clearCurrent, getActualite } = actualiteContext;
+  const { addEvent, updateEvent, current, clearCurrent, getEvent } = eventContext;
   const { setAlert } = alertContext;
   
   const navigate = useNavigate();
   const { id } = useParams();
   
-  const [actualite, setActualite] = useState({
+  // Format date for datetime-local input
+  const formatDateForInput = (date) => {
+    if (!date) return '';
+    const d = new Date(date);
+    return new Date(d.getTime() - d.getTimezoneOffset() * 60000)
+      .toISOString()
+      .substring(0, 16);
+  };
+  
+  const [event, setEvent] = useState({
     title: '',
-    content: '',
+    description: '',
+    eventDate: '',
+    location: '',
     imageUrl: '',
     category: 'académique'
   });
@@ -24,11 +35,13 @@ const ActualiteForm = () => {
     // If editing an existing item
     if (id) {
       if (!current || (current && current._id !== id)) {
-        getActualite(id);
+        getEvent(id);
       } else {
-        setActualite({
+        setEvent({
           title: current.title,
-          content: current.content,
+          description: current.description,
+          eventDate: formatDateForInput(current.eventDate),
+          location: current.location,
           imageUrl: current.imageUrl || '',
           category: current.category || 'académique'
         });
@@ -43,41 +56,41 @@ const ActualiteForm = () => {
     // eslint-disable-next-line
   }, [id, current]);
   
-  const { title, content, imageUrl, category } = actualite;
+  const { title, description, eventDate, location, imageUrl, category } = event;
   
   const onChange = e => {
-    setActualite({ ...actualite, [e.target.name]: e.target.value });
+    setEvent({ ...event, [e.target.name]: e.target.value });
   };
   
   const onSubmit = e => {
     e.preventDefault();
     
-    if (title.trim() === '' || content.trim() === '') {
+    if (title.trim() === '' || description.trim() === '' || !eventDate || location.trim() === '') {
       setAlert('Merci de remplir tous les champs obligatoires', 'danger');
       return;
     }
     
     if (id) {
-      // Update existing actualite
-      updateActualite({
+      // Update existing event
+      updateEvent({
         _id: id,
-        ...actualite
+        ...event
       });
-      setAlert('Actualité mise à jour', 'success');
+      setAlert('Événement mis à jour', 'success');
     } else {
-      // Add new actualite
-      addActualite(actualite);
-      setAlert('Actualité ajoutée', 'success');
+      // Add new event
+      addEvent(event);
+      setAlert('Événement ajouté', 'success');
     }
     
-    // Redirect to admin actualites list
-    navigate('/admin/actualites');
+    // Redirect to admin events list
+    navigate('/admin/evenements');
   };
   
   return (
     <div className="max-w-3xl mx-auto">
       <Link 
-        to="/admin/actualites" 
+        to="/admin/evenements" 
         className="flex items-center text-primary-600 hover:text-primary-700 mb-6"
       >
         <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -88,7 +101,7 @@ const ActualiteForm = () => {
       
       <div className="bg-white rounded-lg shadow-md p-6">
         <h1 className="text-2xl font-bold text-gray-900 mb-6">
-          {id ? 'Modifier une actualité' : 'Ajouter une actualité'}
+          {id ? 'Modifier un événement' : 'Ajouter un événement'}
         </h1>
         
         <form onSubmit={onSubmit}>
@@ -133,15 +146,51 @@ const ActualiteForm = () => {
           
           <div className="mb-4">
             <label 
-              htmlFor="content" 
+              htmlFor="eventDate" 
               className="block text-gray-700 font-medium mb-2"
             >
-              Contenu *
+              Date et heure *
+            </label>
+            <input
+              type="datetime-local"
+              name="eventDate"
+              id="eventDate"
+              value={eventDate}
+              onChange={onChange}
+              className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500"
+              required
+            />
+          </div>
+          
+          <div className="mb-4">
+            <label 
+              htmlFor="location" 
+              className="block text-gray-700 font-medium mb-2"
+            >
+              Lieu *
+            </label>
+            <input
+              type="text"
+              name="location"
+              id="location"
+              value={location}
+              onChange={onChange}
+              className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500"
+              required
+            />
+          </div>
+          
+          <div className="mb-4">
+            <label 
+              htmlFor="description" 
+              className="block text-gray-700 font-medium mb-2"
+            >
+              Description *
             </label>
             <textarea
-              name="content"
-              id="content"
-              value={content}
+              name="description"
+              id="description"
+              value={description}
               onChange={onChange}
               rows="10"
               className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500"
@@ -162,7 +211,7 @@ const ActualiteForm = () => {
               id="imageUrl"
               value={imageUrl}
               onChange={onChange}
-              placeholder="/images/news-default.jpg"
+              placeholder="/images/event-default.jpg"
               className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500"
             />
             <p className="text-sm text-gray-500 mt-1">
@@ -184,6 +233,4 @@ const ActualiteForm = () => {
   );
 };
 
-export default ActualiteForm;
-
- 
+export default EventForm; 

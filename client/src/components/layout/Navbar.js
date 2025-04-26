@@ -67,12 +67,20 @@ const Navbar = () => {
                       Tableau de bord admin
                     </Link>
                     <Link
-                      to="/actualites/gestion"
+                      to="/admin/actualites"
                       className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center"
                       onClick={() => setIsOpen(false)}
                     >
                       <span className="material-icons text-gray-500 mr-2 text-base">article</span>
                       Gérer les actualités
+                    </Link>
+                    <Link
+                      to="/admin/evenements"
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center"
+                      onClick={() => setIsOpen(false)}
+                    >
+                      <span className="material-icons text-gray-500 mr-2 text-base">event</span>
+                      Gérer les événements
                     </Link>
                   </>
                 )}
@@ -168,9 +176,13 @@ const Navbar = () => {
                   <span className="material-icons text-green-400 mr-2 text-base">dashboard</span>
                   Admin
                 </Link>
-                <Link to="/actualites/gestion" className="text-green-400 hover:bg-gray-700 hover:text-green-300 block px-3 py-2 rounded-md text-base font-medium flex items-center">
+                <Link to="/admin/actualites" className="text-green-400 hover:bg-gray-700 hover:text-green-300 block px-3 py-2 rounded-md text-base font-medium flex items-center">
                   <span className="material-icons text-green-400 mr-2 text-base">article</span>
                   Gérer les actualités
+                </Link>
+                <Link to="/admin/evenements" className="text-green-400 hover:bg-gray-700 hover:text-green-300 block px-3 py-2 rounded-md text-base font-medium flex items-center">
+                  <span className="material-icons text-green-400 mr-2 text-base">event</span>
+                  Gérer les événements
                 </Link>
               </>
             )}

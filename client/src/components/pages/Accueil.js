@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import ActualiteContext from '../../context/actualite/actualiteContext';
 import Spinner from '../layout/Spinner';
 import { formatDate } from '../../utils/formatDate';
+import UpcomingEvents from '../events/UpcomingEvents';
 
 const Accueil = () => {
   const actualiteContext = useContext(ActualiteContext);
@@ -125,6 +126,9 @@ const Accueil = () => {
           </div>
         )}
       </div>
+
+      {/* Events Section */}
+      <UpcomingEvents />
     </div>
   );
 };
