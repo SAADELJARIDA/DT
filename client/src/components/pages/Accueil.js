@@ -30,20 +30,6 @@ const Accueil = () => {
             <div className="text-center text-white px-4 max-w-4xl">
               <h1 className="text-4xl md:text-6xl font-bold mb-6">Bienvenue à l'ENSA</h1>
               <p className="text-xl md:text-2xl mb-8">Découvrez l'excellence académique et l'innovation technologique</p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Link 
-                  to="/admission" 
-                  className="bg-primary-600 hover:bg-primary-700 text-white px-8 py-3 rounded-lg font-medium transition-colors"
-                >
-                  Postuler Maintenant
-                </Link>
-                <Link 
-                  to="/formations" 
-                  className="bg-white hover:bg-gray-100 text-primary-600 px-8 py-3 rounded-lg font-medium transition-colors"
-                >
-                  Découvrir nos Formations
-                </Link>
-              </div>
             </div>
           </div>
         </div>
@@ -52,14 +38,10 @@ const Accueil = () => {
       {/* Quick Links Section */}
       <div className="bg-gray-50 py-12">
         <div className="max-w-7xl mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <Link to="/formations" className="bg-white p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow">
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">Nos Formations</h3>
-              <p className="text-gray-600">Découvrez nos programmes d'ingénierie et de recherche</p>
-            </Link>
-            <Link to="/admission" className="bg-white p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow">
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">Admission</h3>
-              <p className="text-gray-600">Informations sur les conditions d'admission et les inscriptions</p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <Link to="/evenements" className="bg-white p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow">
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">Événements</h3>
+              <p className="text-gray-600">Découvrez les événements à venir et passés de l'école</p>
             </Link>
             <Link to="/actualites" className="bg-white p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow">
               <h3 className="text-xl font-semibold text-gray-900 mb-2">Actualités</h3>

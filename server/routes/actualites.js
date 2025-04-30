@@ -136,7 +136,7 @@ router.delete('/:id', [auth, isAdmin], async (req, res) => {
       return res.status(404).json({ msg: 'Actualité non trouvée' });
     }
     
-    await actualite.remove();
+    await Actualite.findByIdAndDelete(req.params.id);
     res.json({ msg: 'Actualité supprimée' });
   } catch (err) {
     console.error(err.message);
