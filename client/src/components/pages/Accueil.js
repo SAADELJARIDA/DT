@@ -17,9 +17,9 @@ const Accueil = () => {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <div className="relative h-[600px] w-full">
+      <div className="relative w-full h-[50vh] min-h-[400px]">
         <div 
-          className="absolute inset-0 bg-cover bg-center"
+          className="absolute inset-0 w-full h-full bg-cover bg-center"
           style={{
             backgroundImage: 'url("/images/hero-banner.jpg")',
             backgroundSize: 'cover',
@@ -27,7 +27,7 @@ const Accueil = () => {
           }}
         >
           <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-            <div className="text-center text-white px-4 max-w-4xl">
+            <div className="text-center text-white px-4 max-w-6xl">
               <h1 className="text-4xl md:text-6xl font-bold mb-6">Bienvenue à l'ENSA</h1>
               <p className="text-xl md:text-2xl mb-8">Découvrez l'excellence académique et l'innovation technologique</p>
             </div>
