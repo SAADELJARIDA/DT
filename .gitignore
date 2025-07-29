@@ -4,7 +4,7 @@
 /server/node_modules
 
 # environment variables
-
+/server/.env
 # build files
 /client/build
 
